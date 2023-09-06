@@ -35,24 +35,24 @@ class TestSuricataBase:
 		self.simple_call(['mkdir', '-p', session_tmpdir])
 		subprocess.call(['rsync', '-zvrpE', './tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
 		log('Making sure remote system is clean...')
-		self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
-		self.simple_call(['sudo', 'pkill', '-9', 'Suricata-Main'])
+		# self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
+		# self.simple_call(['sudo', 'pkill', '-9', 'Suricata-Main'])
 		# self.simple_call(['sudo', 'pkill', '-9', 'top'])
 		# self.simple_call(['sudo', 'pkill', '-9', 'atop'])
 		# Configure NIC to fit Suricata's need.
-		log('Configuring src and dest NICs...')
-		self.simple_call(['sudo', 'ifconfig', args.dest_nic, 'promisc'])
-		for optarg in self.ETHTOOL_ARGS:
-			subprocess.call(['sudo', 'ethtool', '-K', args.src_nic, optarg, 'off'])
-			self.simple_call(['sudo', 'ethtool', '-K', args.dest_nic, optarg, 'off'])
+		# log('Configuring src and dest NICs...')
+		# self.simple_call(['sudo', 'ifconfig', args.dest_nic, 'promisc'])
+		# for optarg in self.ETHTOOL_ARGS:
+		# 	subprocess.call(['sudo', 'ethtool', '-K', args.src_nic, optarg, 'off'])
+		# 	self.simple_call(['sudo', 'ethtool', '-K', args.dest_nic, optarg, 'off'])
 		# Setup macvtap
-		if args.macvtap is True:
-			log('Creating macvtap device for NIC "%s"...' % args.dest_nic)
-			tap_name = self.MACVTAP_NAME
-			mac_addr = gen_random_mac_addr()
-			self.simple_call(['sudo', 'ip', 'link', 'add', 'link', args.dest_nic, 'name', tap_name, 'type', 'macvtap', 'mode', 'passthru'])
-			self.simple_call(['sudo', 'ip', 'link', 'set', tap_name, 'address', mac_addr, 'up'])
-			self.simple_call(['sudo', 'ip', 'link', 'show', tap_name])
+		# if args.macvtap is True:
+		# 	log('Creating macvtap device for NIC "%s"...' % args.dest_nic)
+		# 	tap_name = self.MACVTAP_NAME
+		# 	mac_addr = gen_random_mac_addr()
+		# 	self.simple_call(['sudo', 'ip', 'link', 'add', 'link', args.dest_nic, 'name', tap_name, 'type', 'macvtap', 'mode', 'passthru'])
+		# 	self.simple_call(['sudo', 'ip', 'link', 'set', tap_name, 'address', mac_addr, 'up'])
+		# 	self.simple_call(['sudo', 'ip', 'link', 'show', tap_name])
 
 	def upload_test_session(self, session_id, local_tmpdir, session_tmpdir):
 		log('Upload session data to data server...')
