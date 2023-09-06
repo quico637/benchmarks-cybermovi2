@@ -18,7 +18,7 @@ class TestSuricataBase:
 
 	def __init__(self):
 		self.status = self.STATUS_INIT
-		reboot_remote_host(host=RUNNER_HOST, user=RUNNER_USER)
+		#reboot_remote_host(host=RUNNER_HOST, user=RUNNER_USER)
 		self.shell = get_remote_shell(host=RUNNER_HOST, user=RUNNER_USER)
 
 	def simple_call(self, cmd):

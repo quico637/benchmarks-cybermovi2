@@ -2,5 +2,4 @@
 # nrepeat COMMAND [ARGS]
 1	./update_trace.sh
 
-10 ./test_suricata_bare.py bigFlows.pcap 4 -s enp4s0 -d enp4s0 -t 4 -w 5
-10 ./test_suricata_bare.py bigFlows.pcap 4 -s enp4s0 -d enp4s0 -t 4 -w 5 --replay-speed=4
+1 ./test_suricata_bare.py bigFlows.pcap 4 -s enp4s0 -d enp4s0 -t 4 -w 5
