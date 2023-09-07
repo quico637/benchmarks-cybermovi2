@@ -18,8 +18,9 @@ def reboot_remote_host(host, user):
 
 def get_remote_shell(host=RUNNER_HOST, user=RUNNER_USER):
 	log('Obtaining SSH to "%s@%s"...' % (user, host))
-	return spur.SshShell(hostname=host, username=user, password='quico',
-		# missing_host_key=spur.ssh.MissingHostKey.accept,
+	return spur.SshShell(hostname=host, username=user,
+		password='cybermovi',
+		missing_host_key=spur.ssh.MissingHostKey.accept,
 		load_system_host_keys=True,
 		look_for_private_keys=True)
 
