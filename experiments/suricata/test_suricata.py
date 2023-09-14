@@ -89,6 +89,7 @@ class TestSuricataBase:
 		with open(local_tmpdir + '/tcpreplay.out', 'wb') as f:
 			try:
 				cmd = ['sudo', 'tcpreplay', '-i', src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file]
+				# print('--------a-a-a--a------------- command : ' + 'sudo' + 'tcpreplay' + '-i' src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file)
 				if replay_speed_X != 1:
 					cmd += ['--multiplier', str(replay_speed_X)]
 				for i in range(nworker):
@@ -96,7 +97,20 @@ class TestSuricataBase:
 				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
 				for w in workers:
 					w.wait()
+				log('All tcpreplay FIRST ROUND')
+
+
+				# sencond time
+				workers = []
+				for i in range(nworker):
+					workers.append(subprocess.Popen(cmd, stdout=f, stderr=f))
+				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
+				for w in workers:
+					w.wait()
 				log('All tcpreplay processes are complete. Wait for 20sec before proceeding.')
+
+
+
 				time.sleep(20)
 			except KeyboardInterrupt as e:
 				log('Interrupted. Stopping tcpreplay processes...')

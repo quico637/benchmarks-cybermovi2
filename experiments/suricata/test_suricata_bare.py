@@ -77,8 +77,10 @@ class TestSuricataBareMetal(TestSuricataBase):
 
 def main():
 	parser = argparse.ArgumentParser(description='Run Suricata directly on top of remote host and collect system info.')
-	parser.add_argument('trace', type=str, help='Name of a trace file in trace repository.')
-	parser.add_argument('nworker', type=int, help='Number of concurrent TCPreplay processes.')
+	# parser.add_argument('trace', type=str, help='Name of a trace file in trace repository.')
+	parser.add_argument('--trace', nargs='?', type=str, default='bigFlow.pcap', help='Name of a trace file in trace repository.')
+	# parser.add_argument('nworker', type=int, help='Number of concurrent TCPreplay processes.')
+	parser.add_argument('--nworker', nargs='?', default=2, type=int, help='Number of concurrent TCPreplay processes.')
 	parser.add_argument('--src-nic', '-s', nargs='?', type=str, default='em2', help='Replay trace on this local NIC.')
 	parser.add_argument('--dest-nic', '-d', nargs='?', type=str, default='em2', help='Trace will be observed on this NIC on the dest host.')
 	parser.add_argument('--macvtap', '-v', default=False, action='store_true', help='If present, create a macvtap device on dest host.')
