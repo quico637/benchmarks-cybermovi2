@@ -100,14 +100,14 @@ class TestSuricataBase:
 				log('All tcpreplay FIRST ROUND')
 
 
-				# sencond time
-				workers = []
-				for i in range(nworker):
-					workers.append(subprocess.Popen(cmd, stdout=f, stderr=f))
-				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
-				for w in workers:
-					w.wait()
-				log('All tcpreplay processes are complete. Wait for 20sec before proceeding.')
+				# # sencond time
+				# workers = []
+				# for i in range(nworker):
+				# 	workers.append(subprocess.Popen(cmd, stdout=f, stderr=f))
+				# log('Waiting for all %d tcpreplay processes to complete...' % nworker)
+				# for w in workers:
+				# 	w.wait()
+				# log('All tcpreplay processes are complete. Wait for 20sec before proceeding.')
 
 
 
