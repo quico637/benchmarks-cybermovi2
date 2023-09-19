@@ -64,8 +64,8 @@ class TestSuricataBase:
 		subprocess.call(['sudo', 'pkill', '-9', 'tcpreplay'])
 		if args.macvtap:
 			self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
-		subprocess.call(['rm', '-rfv', local_tmpdir])
-		self.simple_call(['rm', '-rfv', session_tmpdir])
+		# subprocess.call(['rm', '-rfv', local_tmpdir])
+		# self.simple_call(['rm', '-rfv', session_tmpdir])
 
 	def close(self):
 		del self.shell
@@ -97,7 +97,7 @@ class TestSuricataBase:
 				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
 				for w in workers:
 					w.wait()
-				log('All tcpreplay FIRST ROUND')
+				# log('All tcpreplay FIRST ROUND')
 
 
 				# # sencond time
