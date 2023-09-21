@@ -18,7 +18,7 @@ class TestSnortBase:
 
 	def __init__(self):
 		self.status = self.STATUS_INIT
-		reboot_remote_host(host=RUNNER_HOST, user=RUNNER_USER)
+		# reboot_remote_host(host=RUNNER_HOST, user=RUNNER_USER)
 		self.shell = get_remote_shell(host=RUNNER_HOST, user=RUNNER_USER)
 
 	def simple_call(self, cmd):
@@ -35,24 +35,24 @@ class TestSnortBase:
 		self.simple_call(['mkdir', '-p', session_tmpdir])
 		subprocess.call(['rsync', '-zvrpEL', './tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
 		log('Making sure remote system is clean...')
-		self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
-		self.simple_call(['sudo', 'pkill', '-9', 'snort'])
+		# self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
+		# self.simple_call(['sudo', 'pkill', '-9', 'snort'])
 		# self.simple_call(['sudo', 'pkill', '-9', 'top'])
 		# self.simple_call(['sudo', 'pkill', '-9', 'atop'])
 		# Configure NIC to fit Suricata's need.
-		log('Configuring src and dest NICs...')
-		self.simple_call(['sudo', 'ifconfig', args.dest_nic, 'promisc'])
-		for optarg in self.ETHTOOL_ARGS:
-			subprocess.call(['sudo', 'ethtool', '-K', args.src_nic, optarg, 'off'])
-			self.simple_call(['sudo', 'ethtool', '-K', args.dest_nic, optarg, 'off'])
+		# log('Configuring src and dest NICs...')
+		# self.simple_call(['sudo', 'ifconfig', args.dest_nic, 'promisc'])
+		# for optarg in self.ETHTOOL_ARGS:
+		# 	subprocess.call(['sudo', 'ethtool', '-K', args.src_nic, optarg, 'off'])
+		# 	self.simple_call(['sudo', 'ethtool', '-K', args.dest_nic, optarg, 'off'])
 		# Setup macvtap
-		if args.macvtap is True:
-			log('Creating macvtap device for NIC "%s"...' % args.dest_nic)
-			tap_name = self.MACVTAP_NAME
-			mac_addr = gen_random_mac_addr()
-			self.simple_call(['sudo', 'ip', 'link', 'add', 'link', args.dest_nic, 'name', tap_name, 'type', 'macvtap', 'mode', 'passthru'])
-			self.simple_call(['sudo', 'ip', 'link', 'set', tap_name, 'address', mac_addr, 'up'])
-			self.simple_call(['sudo', 'ip', 'link', 'show', tap_name])
+		# if args.macvtap is True:
+		# 	log('Creating macvtap device for NIC "%s"...' % args.dest_nic)
+		# 	tap_name = self.MACVTAP_NAME
+		# 	mac_addr = gen_random_mac_addr()
+		# 	self.simple_call(['sudo', 'ip', 'link', 'add', 'link', args.dest_nic, 'name', tap_name, 'type', 'macvtap', 'mode', 'passthru'])
+		# 	self.simple_call(['sudo', 'ip', 'link', 'set', tap_name, 'address', mac_addr, 'up'])
+		# 	self.simple_call(['sudo', 'ip', 'link', 'show', tap_name])
 
 	def upload_test_session(self, session_id, local_tmpdir, session_tmpdir):
 		log('Upload session data to data server...')
@@ -64,15 +64,15 @@ class TestSnortBase:
 		subprocess.call(['sudo', 'pkill', '-9', 'tcpreplay'])
 		if args.macvtap:
 			self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
-		subprocess.call(['rm', '-rfv', local_tmpdir])
-		self.simple_call(['rm', '-rfv', session_tmpdir])
+		# subprocess.call(['rm', '-rfv', local_tmpdir])
+		# self.simple_call(['rm', '-rfv', session_tmpdir])
 
 	def close(self):
 		del self.shell
 
 	def wait_for_snort(self, session_tmpdir, prepend=[]):
 		log('Waiting for 4min for Snort to stabilize...')
-		time.sleep(240)
+		time.sleep(2)
 		log('Wait is complete.')
 
 	def replay_trace(self, local_tmpdir, trace_file, nworker, src_nic, poll_interval_sec, replay_speed_X):
@@ -92,8 +92,8 @@ class TestSnortBase:
 				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
 				for w in workers:
 					w.wait()
-				log('All tcpreplay processes are complete. Wait for 60sec before proceeding.')
-				time.sleep(60)
+				log('All tcpreplay processes are complete. Wait for 1sec before proceeding.')
+				time.sleep(1)
 			except KeyboardInterrupt as e:
 				log('Interrupted. Stopping tcpreplay processes...')
 				for w in workers:

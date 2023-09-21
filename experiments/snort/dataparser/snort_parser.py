@@ -41,6 +41,7 @@ class SnortOutputParser:
 
 	def parse_memory_usage_summary(self, section):
 		pass
+	
 
 	def parse_packet_io_totals(self, section):
 		data = dict()
