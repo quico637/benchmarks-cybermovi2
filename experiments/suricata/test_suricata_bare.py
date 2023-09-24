@@ -31,7 +31,10 @@ class TestSuricataBareMetal(TestSuricataBase):
 			'--enable-ps', '--ps-keywords', 'suricata', '--ps-outfile', 'psstat.suricata.csv'],
 			cwd=self.session_tmpdir, store_pid=True, allow_error=True, stdout=sys.stdout.buffer, stderr=sys.stdout.buffer)
 		self.suricata_out = open(self.local_tmpdir + '/suricata.out', 'wb')
-		self.suricata_proc = self.shell.spawn(['suricata', '-l', self.session_tmpdir, '-i', dest_nic],
+		# self.suricata_proc = self.shell.spawn(['suricata', '-l', self.session_tmpdir, '-i', dest_nic],
+			# stdout=self.suricata_out, stderr=self.suricata_out, store_pid=True, allow_error=True)
+		
+		self.suricata_proc = self.shell.spawn(['suricata', '-l', self.session_tmpdir, '--dpdk', '-S', '/home/quico/Documents/safeman-doc/doc/suricata/suricata.rules'],
 			stdout=self.suricata_out, stderr=self.suricata_out, store_pid=True, allow_error=True)
 		self.wait_for_suricata(self.session_tmpdir)
 		self.replay_trace(self.local_tmpdir, self.args.trace, self.args.nworker, self.args.src_nic, self.args.interval, self.args.replay_speed)

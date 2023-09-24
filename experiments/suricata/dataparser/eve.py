@@ -19,8 +19,10 @@ from . import exceptions
 EVE_STRUCTURE = {
 	"uptime": "key",
 	"capture": {
-      "kernel_packets": "avg",
-      "kernel_drops": "avg",
+      "packets": "avg",
+	  "dpdk" : {
+		  "ierrors" : "avg"
+	  }
     },
     "decoder": {
       "pkts": "avg",
@@ -50,7 +52,7 @@ class EveCollection:
 
 	def to_xlsx(self):
 		# TODO: Parse this from STRUCTURE.
-		sheet_header = ['uptime', 'capture.kernel_packets', 'capture.kernel_drops', 'decoder.pkts', 'decoder.bytes', 'detect.alert']
+		sheet_header = ['uptime', 'capture.packets', 'capture.dpdk.ierrors', 'decoder.pkts', 'decoder.bytes', 'detect.alert']
 		max_rowcount = 0
 		max_colcount = len(sheet_header)
 		with open('%s,eve.log' % self.name, 'w') as f:

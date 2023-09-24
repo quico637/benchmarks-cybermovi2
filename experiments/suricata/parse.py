@@ -8,6 +8,7 @@ import sys
 import multiprocessing
 import threading
 import traceback
+import time
 
 from colors import Colors
 from dataparser import eve
@@ -23,6 +24,8 @@ eveparser = eve.EveParser()
 sysstatparser = mon.SysStatParser()
 netstatparser = mon.NetStatParser()
 psstatparser = mon.PsStatParser()
+
+
 
 # The number of concurrent workers equals the number of CPU threads.
 NUM_WORKERS = multiprocessing.cpu_count() 
@@ -117,20 +120,21 @@ def traverse_logdir(path, scan_depth):
 			prefix, engine, ts, trace, nworker, args = dirname.split(',', maxsplit=5)
 			args = args.replace(',1024m,', ',1g,', 1)
 			execute(all_futures, executor, parse_eve, dirpath + '/eve.json', engine, ts, trace, nworker, args)
-			execute(all_futures, executor, parse_sysstat, dirpath + '/sysstat.sender.csv', engine, ts, trace, nworker, args + ',sender')
-			execute(all_futures, executor, parse_netstat, dirpath + '/netstat.tcpreplay.em2.csv', engine, ts, trace, nworker, args + ',netout')
-			execute(all_futures, executor, parse_netstat, dirpath + '/netstat.enp34s0.csv', engine, ts, trace, nworker, args + ',netin')
-			execute(all_futures, executor, parse_sysstat, dirpath + '/sysstat.receiver.csv', engine, ts, trace, nworker, args + ',receiver')
-			if prefix == 'bm':
-				execute(all_futures, executor, parse_psstat, dirpath + '/psstat.suricata.csv', engine, ts, trace, nworker, args)
-			elif prefix == 'docker':
-				execute(all_futures, executor, parse_psstat, dirpath + '/psstat.docker.csv', engine, ts, trace, nworker, args)
-			elif engine == 'vm':
-				execute(all_futures, executor, parse_psstat, dirpath + '/psstat.qemu.csv', engine, ts, trace, nworker, args)
-				execute(all_futures, executor, parse_sysstat, dirpath + '/sysstat.vm.csv', engine, ts, trace, nworker, args + ',vm')
-				execute(all_futures, executor, parse_psstat, dirpath + '/psstat.suricata.vm.csv', engine, ts, trace, nworker, args + ',vm,suricata')
-				execute(all_futures, executor, parse_netstat, dirpath + '/netstat.eth1.vm.csv', engine, ts, trace, nworker, args + ',vm,netin')
+			# execute(all_futures, executor, parse_sysstat, dirpath + '/sysstat.sender.csv', engine, ts, trace, nworker, args + ',sender')
+			# execute(all_futures, executor, parse_netstat, dirpath + '/netstat.tcpreplay.em2.csv', engine, ts, trace, nworker, args + ',netout')
+			# execute(all_futures, executor, parse_netstat, dirpath + '/netstat.enp34s0.csv', engine, ts, trace, nworker, args + ',netin')
+			# execute(all_futures, executor, parse_sysstat, dirpath + '/sysstat.receiver.csv', engine, ts, trace, nworker, args + ',receiver')
+			# if prefix == 'bm':
+			# 	execute(all_futures, executor, parse_psstat, dirpath + '/psstat.suricata.csv', engine, ts, trace, nworker, args)
+			# elif prefix == 'docker':
+			# 	execute(all_futures, executor, parse_psstat, dirpath + '/psstat.docker.csv', engine, ts, trace, nworker, args)
+			# elif engine == 'vm':
+			# 	execute(all_futures, executor, parse_psstat, dirpath + '/psstat.qemu.csv', engine, ts, trace, nworker, args)
+			# 	execute(all_futures, executor, parse_sysstat, dirpath + '/sysstat.vm.csv', engine, ts, trace, nworker, args + ',vm')
+			# 	execute(all_futures, executor, parse_psstat, dirpath + '/psstat.suricata.vm.csv', engine, ts, trace, nworker, args + ',vm,suricata')
+			# 	execute(all_futures, executor, parse_netstat, dirpath + '/netstat.eth1.vm.csv', engine, ts, trace, nworker, args + ',vm,netin')
 		print('\033[94m[%s]\033[0m \033[92mWaiting for all tasks to complete.\033[0m' % threading.current_thread().name)
+		
 		for future in concurrent.futures.as_completed(all_futures):
 			try:
 				future.result()
@@ -139,6 +143,11 @@ def traverse_logdir(path, scan_depth):
 				errors.append((future, str(e)))
 				print(Colors.RED + 'Error: %s' % e + Colors.ENDC)
 				print(traceback.format_exc())
+			
+		
+		
+	
+				
 	print(Colors.GRAY + '-' * 80 + Colors.ENDC)
 	print(Colors.CYAN + 'Summary:' + Colors.ENDC)
 	print(Colors.GREEN + 'Successes:\t%d' % num_successes + Colors.ENDC)
