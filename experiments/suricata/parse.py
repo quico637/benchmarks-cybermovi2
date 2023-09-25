@@ -145,7 +145,8 @@ def traverse_logdir(path, scan_depth):
 				print(traceback.format_exc())
 			
 		
-		
+	
+
 	
 				
 	print(Colors.GRAY + '-' * 80 + Colors.ENDC)
