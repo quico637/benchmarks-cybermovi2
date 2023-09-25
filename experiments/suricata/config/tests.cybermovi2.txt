@@ -2,5 +2,5 @@
 # nrepeat COMMAND [ARGS]
 1	./update_trace.sh
 
-# 1 ./test_suricata_bare.py --trace=bigFlows.pcap --nworker=64 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=16
-1 ./test_suricata_bare.py --trace=test.pcap --nworker=1 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=1
+1 ./test_suricata_bare.py --trace=bigFlows.pcap --nworker=128 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=16
+# 1 ./test_suricata_bare.py --trace=test.pcap --nworker=1 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=1

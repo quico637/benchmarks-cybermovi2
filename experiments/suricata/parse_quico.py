@@ -23,48 +23,6 @@ EVE_STRUCTURE = {
     }
 }
 
-class EveParser2:
-
-    def __init__(self):
-        pass
-
-    def parse_stat(self, d):
-        data_key = None
-        data_value = dict()
-        for key, role in EVE_STRUCTURE.items():
-            if role == 'key':
-                data_key = d[key]
-            elif isinstance(role, dict):
-                for subkey, subrole in role.items():
-                    data_value['%s.%s' % (key, subkey)] = d[key][subkey]
-        return data_key, data_value
-
-    def parse(self, eve_path):
-        data = dict()
-        with open(eve_path, 'r') as f:
-            for line in f:
-                if 'stats' in line:
-                    ev = json.loads(line)
-                    if ev['event_type'] == 'stats':
-                        key, val = self.parse_stat(ev['stats'])
-                        data[key] = val
-        return data
-
-    def parse_to_csv(self, data, output_csv_file):
-
-        header = data.keys()
-
-        with open(output_csv_file, 'w', newline='') as csv_file:
-            csv_writer = csv.DictWriter(csv_file, fieldnames=header)
-
-            # Write the header
-            csv_writer.writeheader()
-
-            # Write the data
-            csv_writer.writerows(data)
-
-
-
 class EveParser:
 
     def __init__(self):
