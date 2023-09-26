@@ -84,7 +84,6 @@ def parse_netstat(path, engine, ts, trace, nworker, args):
 	_parse_csvstat(netstatcollections, mon.NetStatCollection, netstatparser,
 		path, engine, ts, trace, nworker, args)
 
-
 def parse_sysstat(path, engine, ts, trace, nworker, args):
 	_parse_csvstat(sysstatcollections, mon.SysStatCollection, sysstatparser,
 		path, engine, ts, trace, nworker, args)
