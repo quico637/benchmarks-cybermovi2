@@ -1,0 +1,4 @@
+Timestamp,  Uptime, NIC, sent.B, recv.B, sent.pkts, recv.pkts, err.in, err.out, drop.in, drop.out
+1695746721, 0, enp5s0f1, 0, 0, 0, 0, 0, 0, 0, 0
+1695746722, 1, enp5s0f1, 1554979, 0, 4834, 0, 0, 0, 0, 0
+1695746723, 2, enp5s0f1, 1737338, 0, 5328, 0, 0, 0, 0, 0
