@@ -88,10 +88,10 @@ class TestSuricataBase:
 		workers = []
 		with open(local_tmpdir + '/tcpreplay.out', 'wb') as f:
 			try:
-				cmd = ['sudo', 'tcpreplay', '-i', src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file]
-				# print('--------a-a-a--a------------- command : ' + 'sudo' + 'tcpreplay' + '-i' src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file)
 				if replay_speed_X != 1:
-					cmd += ['--multiplier', str(replay_speed_X)]
+					cmd = ['sudo', 'tcpreplay', '-i', src_nic, '--multiplier', str(replay_speed_X), LOCAL_TRACE_REPO_DIR + '/' + trace_file]
+				else:
+					cmd = ['sudo', 'tcpreplay', '-i', src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file]
 				for i in range(nworker):
 					workers.append(subprocess.Popen(cmd, stdout=f, stderr=f))
 				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
