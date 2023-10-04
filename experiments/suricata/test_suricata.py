@@ -75,12 +75,12 @@ class TestSuricataBase:
 			ret = self.shell.run(prepend + ['test', '-f', session_tmpdir + '/eve.json'], allow_error=True)
 			if ret.return_code != 0:
 				log('Waiting for 8sec for Suricata to stabilize...')
-				time.sleep(8)
+				# time.sleep(8)
 			else:
 				log('Suricata is ready.')
 				return
 
-	def replay_trace(self, local_tmpdir, trace_file, nworker, src_nic, poll_interval_sec, replay_speed_X):
+	def replay_trace(self, local_tmpdir, trace_file, nworker, src_nic, poll_interval_sec, replay_speed_X, mbps):
 		monitor_proc = subprocess.Popen([os.getcwd() + '/tester_script/sysmon.py',
 			'--delay', str(poll_interval_sec), '--outfile', 'sysstat.sender.csv',
 			'--nic', src_nic, '--nic-outfile', 'netstat.tcpreplay.{nic}.csv'],
@@ -88,30 +88,23 @@ class TestSuricataBase:
 		workers = []
 		with open(local_tmpdir + '/tcpreplay.out', 'wb') as f:
 			try:
-				if replay_speed_X != 1:
-					cmd = ['sudo', 'tcpreplay', '-i', src_nic, '--multiplier', str(replay_speed_X), LOCAL_TRACE_REPO_DIR + '/' + trace_file]
+
+				cmd = ['sudo', 'tcpreplay', '-i', src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file]
+
+				if mbps:
+					cmd = ['sudo', 'tcpreplay', '--mbps', str(mbps), '-i', src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file]
 				else:
-					cmd = ['sudo', 'tcpreplay', '-i', src_nic, LOCAL_TRACE_REPO_DIR + '/' + trace_file]
+					if replay_speed_X != 1:
+						cmd = ['sudo', 'tcpreplay', '-i', src_nic, '--multiplier', str(replay_speed_X), LOCAL_TRACE_REPO_DIR + '/' + trace_file]
+
+
 				for i in range(nworker):
 					workers.append(subprocess.Popen(cmd, stdout=f, stderr=f))
 				log('Waiting for all %d tcpreplay processes to complete...' % nworker)
 				for w in workers:
 					w.wait()
-				# log('All tcpreplay FIRST ROUND')
 
-
-				# # sencond time
-				# workers = []
-				# for i in range(nworker):
-				# 	workers.append(subprocess.Popen(cmd, stdout=f, stderr=f))
-				# log('Waiting for all %d tcpreplay processes to complete...' % nworker)
-				# for w in workers:
-				# 	w.wait()
-				# log('All tcpreplay processes are complete. Wait for 20sec before proceeding.')
-
-
-
-				time.sleep(20)
+				time.sleep(5)
 			except KeyboardInterrupt as e:
 				log('Interrupted. Stopping tcpreplay processes...')
 				for w in workers:

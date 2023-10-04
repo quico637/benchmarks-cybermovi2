@@ -37,7 +37,7 @@ class TestSuricataBareMetal(TestSuricataBase):
 		self.suricata_proc = self.shell.spawn(['suricata', '-l', self.session_tmpdir, '--dpdk', '-S', '/home/quico/Documents/safeman-doc/doc/suricata/suricata.rules'],
 			stdout=self.suricata_out, stderr=self.suricata_out, store_pid=True, allow_error=True)
 		self.wait_for_suricata(self.session_tmpdir)
-		self.replay_trace(self.local_tmpdir, self.args.trace, self.args.nworker, self.args.src_nic, self.args.interval, self.args.replay_speed)
+		self.replay_trace(self.local_tmpdir, self.args.trace, self.args.nworker, self.args.src_nic, self.args.interval, self.args.replay_speed, self.args.mbps)
 		self.suricata_proc.send_signal(signal.SIGTERM)
 		suricata_result = self.suricata_proc.wait_for_result()
 		log('Suricata returned with value %d.' % suricata_result.return_code)
@@ -90,6 +90,7 @@ def main():
 	parser.add_argument('--interval', '-t', nargs='?', type=int, default=4, help='Interval (sec) between collecting dest host info.')
 	parser.add_argument('--swappiness', '-w', nargs='?', type=int, default=5, help='Memory swappiness of the host (e.g., 5).')
 	parser.add_argument('--replay-speed', nargs='?', type=int, default=1, help='Speed of TCP replay (e.g., 2 for double the speed).')
+	parser.add_argument('--mbps', nargs='?', type=float, default=None, help='Mbps to send with one process.')
 	args = parser.parse_args()
 	log(str(args))
 	TestSuricataBareMetal(args).start()
