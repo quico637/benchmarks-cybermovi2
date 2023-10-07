@@ -20,19 +20,20 @@ class TestSuricataBase:
 		self.status = self.STATUS_INIT
 		#reboot_remote_host(host=RUNNER_HOST, user=RUNNER_USER)
 		self.shell = get_remote_shell(host=RUNNER_HOST, user=RUNNER_USER)
+		self.zombie_shell = get_remote_shell(host=ZOMBIE_HOST, user=ZOMBIE_USER)
 
-	def simple_call(self, cmd):
-		return self.shell.run(cmd, stdout=sys.stdout.buffer, stderr=sys.stdout.buffer, allow_error=True).return_code
+	def simple_call(self, cmd, shell):
+		return shell.run(cmd, stdout=sys.stdout.buffer, stderr=sys.stdout.buffer, allow_error=True).return_code
 
-	def init_test_session(self, session_id, local_tmpdir, session_tmpdir, args):
+	def init_test_session(self, shell, session_id, local_tmpdir, session_tmpdir, args):
 		log('Adjusting swappiness of remote host...')
-		self.simple_call(['sudo', 'sysctl', '-w', 'vm.swappiness=' + str(args.swappiness)])
-		self.simple_call(['sysctl', 'vm.swappiness'])
+		self.simple_call(['sudo', 'sysctl', '-w', 'vm.swappiness=' + str(args.swappiness)], shell)
+		self.simple_call(['sysctl', 'vm.swappiness'], shell)
 		log('Creating local temp dir...')
 		subprocess.call(['mkdir', '-p', local_tmpdir])
 		subprocess.call(['sudo', 'pkill', '-9', 'tcpreplay'])
 		log('Initializing remote temp dir...')
-		self.simple_call(['mkdir', '-p', session_tmpdir])
+		self.simple_call(['mkdir', '-p', session_tmpdir], shell)
 		subprocess.call(['rsync', '-zvrpE', './tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
 		log('Making sure remote system is clean...')
 		# self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
@@ -54,16 +55,16 @@ class TestSuricataBase:
 		# 	self.simple_call(['sudo', 'ip', 'link', 'set', tap_name, 'address', mac_addr, 'up'])
 		# 	self.simple_call(['sudo', 'ip', 'link', 'show', tap_name])
 
-	def upload_test_session(self, session_id, local_tmpdir, session_tmpdir):
+	def upload_test_session(self, shell, session_id, local_tmpdir, session_tmpdir):
 		log('Upload session data to data server...')
 		data_store = '%s@%s:%s/' % (DATA_USER, DATA_HOST, DATA_DIR)
 		subprocess.call(['sudo', 'rsync', '-zvrpE', local_tmpdir, data_store])
-		self.simple_call(['sudo', 'rsync', '-zvrpE', session_tmpdir, data_store])
+		self.simple_call(['sudo', 'rsync', '-zvrpE', session_tmpdir, data_store], shell)
 
-	def destroy_session(self, session_id, local_tmpdir, session_tmpdir, args):
+	def destroy_session(self, shell, session_id, local_tmpdir, session_tmpdir, args):
 		subprocess.call(['sudo', 'pkill', '-9', 'tcpreplay'])
 		if args.macvtap:
-			self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
+			self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'], shell)
 		# subprocess.call(['rm', '-rfv', local_tmpdir])
 		# self.simple_call(['rm', '-rfv', session_tmpdir])
 

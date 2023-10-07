@@ -16,7 +16,8 @@ class TestSuricataBareMetal(TestSuricataBase):
 		self.local_tmpdir = TESTER_TMPDIR + '/' + self.session_id
 
 	def prework(self):
-		self.init_test_session(self.session_id, self.local_tmpdir, self.session_tmpdir, self.args)
+		self.init_test_session(self.shell, self.session_id, self.local_tmpdir, self.session_tmpdir, self.args)
+		self.init_test_session(self.zombie_shell, self.session_id, self.local_tmpdir, self.session_tmpdir, self.args)
 
 	def run(self):
 		self.status = self.STATUS_START
@@ -50,7 +51,8 @@ class TestSuricataBareMetal(TestSuricataBase):
 	def postwork(self):
 		log('Postwork...')
 		if self.status == self.STATUS_DONE:
-			self.upload_test_session(self.session_id, self.local_tmpdir, self.session_tmpdir)
+			self.upload_test_session(self.shell, self.session_id, self.local_tmpdir, self.session_tmpdir)
+			self.upload_test_session(self.zombie_shell, self.session_id, self.local_tmpdir, self.session_tmpdir)
 
 	def cleanup(self):
 		log('Cleaning up...')
@@ -61,7 +63,8 @@ class TestSuricataBareMetal(TestSuricataBase):
 			self.suricata_proc.send_signal(signal.SIGKILL)
 		if hasattr(self, 'suricata_out'):
 			self.suricata_out.close()
-		self.destroy_session(self.session_id, self.local_tmpdir, self.session_tmpdir, self.args)
+		self.destroy_session(self.shell, self.session_id, self.local_tmpdir, self.session_tmpdir, self.args)
+		self.destroy_session(self.zombie_shell, self.session_id, self.local_tmpdir, self.session_tmpdir, self.args)
 		self.close()
 
 	def start(self):
