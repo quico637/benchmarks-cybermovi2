@@ -75,7 +75,7 @@ class TestSuricataBase:
 		while True:
 			if self.simple_call(prepend + ['test', '-f', session_tmpdir + '/eve.json']) != 0:
 				log('Waiting for 8sec for Suricata to stabilize...')
-				time.sleep(8)
+				# time.sleep(8)
 			else:
 				log('Suricata is ready.')
 				return
