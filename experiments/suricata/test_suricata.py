@@ -3,6 +3,8 @@
 import os
 import signal
 import sys
+import re
+import csv
 
 from testbase import *
 
@@ -23,6 +25,32 @@ class TestSuricataBase:
 
 	def simple_call(self, cmd):
 		return self.shell.run(cmd, stdout=sys.stdout.buffer, stderr=sys.stdout.buffer, allow_error=True).return_code
+	
+	def parse_monitor_proc(self, output_file):
+
+		with open("nload_output.txt", "rb") as input_file:
+			line2 = input_file.read()
+		line = str(line2)
+
+
+		# Parse the data to find HMax and HAvg values for "Device enp1s0"
+		pattern = r"\d+;\d+HMax: \d+.\d+ .Bit/s"
+		match = re.findall(pattern, line)
+
+		print(f"line: {line}")
+
+		if match:
+			HMax = match[-1]
+
+				# Write the HMax and HAvg values to a CSV file
+			with open(f"{self.local_tmpdir}/nload_data.csv", "w", newline="") as csv_file:
+				writer = csv.writer(csv_file)
+				writer.writerow(["HMax"])
+				writer.writerow([HMax])
+
+			print(f"HMax: {HMax}")
+			
+
 
 	def init_test_session(self, session_id, local_tmpdir, session_tmpdir, args):
 		log('Adjusting swappiness of remote host...')
@@ -35,24 +63,6 @@ class TestSuricataBase:
 		self.simple_call(['mkdir', '-p', session_tmpdir])
 		subprocess.call(['rsync', '-zvrpE', './tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
 		log('Making sure remote system is clean...')
-		# self.simple_call(['sudo', 'ip', 'link', 'del', 'macvtap0'])
-		# self.simple_call(['sudo', 'pkill', '-9', 'Suricata-Main'])
-		# self.simple_call(['sudo', 'pkill', '-9', 'top'])
-		# self.simple_call(['sudo', 'pkill', '-9', 'atop'])
-		# Configure NIC to fit Suricata's need.
-		# log('Configuring src and dest NICs...')
-		# self.simple_call(['sudo', 'ifconfig', args.dest_nic, 'promisc'])
-		# for optarg in self.ETHTOOL_ARGS:
-		# 	subprocess.call(['sudo', 'ethtool', '-K', args.src_nic, optarg, 'off'])
-		# 	self.simple_call(['sudo', 'ethtool', '-K', args.dest_nic, optarg, 'off'])
-		# Setup macvtap
-		# if args.macvtap is True:
-		# 	log('Creating macvtap device for NIC "%s"...' % args.dest_nic)
-		# 	tap_name = self.MACVTAP_NAME
-		# 	mac_addr = gen_random_mac_addr()
-		# 	self.simple_call(['sudo', 'ip', 'link', 'add', 'link', args.dest_nic, 'name', tap_name, 'type', 'macvtap', 'mode', 'passthru'])
-		# 	self.simple_call(['sudo', 'ip', 'link', 'set', tap_name, 'address', mac_addr, 'up'])
-		# 	self.simple_call(['sudo', 'ip', 'link', 'show', tap_name])
 
 	def upload_test_session(self, session_id, local_tmpdir, session_tmpdir):
 		log('Upload session data to data server...')
@@ -82,10 +92,13 @@ class TestSuricataBase:
 				return
 
 	def replay_trace(self, local_tmpdir, trace_file, nworker, src_nic, poll_interval_sec, replay_speed_X):
-		monitor_proc = subprocess.Popen([os.getcwd() + '/tester_script/sysmon.py',
-			'--delay', str(poll_interval_sec), '--outfile', 'sysstat.sender.csv',
-			'--nic', src_nic, '--nic-outfile', 'netstat.tcpreplay.{nic}.csv'],
-			stdout=sys.stdout, stderr=sys.stderr, cwd=local_tmpdir)
+		
+		os.remove("nload_output.txt")
+
+		with open("nload_output.txt", "w") as output_file:
+			monitor_proc = subprocess.Popen(["nload", 'device', src_nic], stdout=output_file, stderr=subprocess.PIPE, text=True)
+
+
 		workers = []
 		with open(local_tmpdir + '/tcpreplay.out', 'wb') as f:
 			try:
@@ -123,6 +136,9 @@ class TestSuricataBase:
 			finally:
 				monitor_proc.send_signal(signal.SIGINT)
 				monitor_proc.wait()
+				self.parse_monitor_proc(output_file)
 
+
+	
 	def start(self):
 		raise NotImplementedError()
