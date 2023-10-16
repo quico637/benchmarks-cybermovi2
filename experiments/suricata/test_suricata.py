@@ -42,6 +42,10 @@ class TestSuricataBase:
 		if match:
 			HMax = match[-1]
 
+			pattern = r"\d+.\d+"
+			HMax = re.findall(pattern, HMax)[-1]
+
+
 				# Write the HMax and HAvg values to a CSV file
 			with open(f"{self.local_tmpdir}/nload_data.csv", "w", newline="") as csv_file:
 				writer = csv.writer(csv_file)
