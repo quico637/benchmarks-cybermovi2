@@ -71,7 +71,7 @@ class TestSuricataBareMetal(TestSuricataBase):
 		try:
 			self.prework()
 			self.run()
-			self.postwork()
+			# self.postwork()
 			self.cleanup()
 		except KeyboardInterrupt:
 			log('Interrupted. Stopping and cleaning...')

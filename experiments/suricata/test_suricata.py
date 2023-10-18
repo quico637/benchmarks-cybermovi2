@@ -61,7 +61,7 @@ class TestSuricataBase:
 		log('Initializing remote temp dir...')
 		self.simple_call(['mkdir', '-p', session_tmpdir])
 		self.simple_call(['rm', '-rf', '/usr/local/var/log/suricata/eve.json'])
-		subprocess.call(['rsync', '-zvrpE', './tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
+		subprocess.call(['rsync', '-zvrpE', '-e', '\"ssh' , '-i', '/home/quico/.ssh/id_rsa.pub\"','./tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
 		log('Making sure remote system is clean...')
 
 	def upload_test_session(self, session_id, local_tmpdir, session_tmpdir):
