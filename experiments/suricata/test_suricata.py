@@ -60,6 +60,7 @@ class TestSuricataBase:
 		subprocess.call(['sudo', 'pkill', '-9', 'tcpreplay'])
 		log('Initializing remote temp dir...')
 		self.simple_call(['mkdir', '-p', session_tmpdir])
+		self.simple_call(['rm', '-rf', '/usr/local/var/log/suricata/eve.json'])
 		subprocess.call(['rsync', '-zvrpE', './tester_script', '%s@%s:%s/' % (RUNNER_USER, RUNNER_HOST, RUNNER_TMPDIR)])
 		log('Making sure remote system is clean...')
 
