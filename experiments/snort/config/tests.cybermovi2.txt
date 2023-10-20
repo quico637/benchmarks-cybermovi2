@@ -2,9 +2,18 @@
 # nrepeat COMMAND [ARGS]
 1	./update_trace.sh
 
-1 ./test_snort_bare.py test.pcap 64 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=16
+# 1 ./test_snort_bare.py test.pcap 64 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=16
 # 1 ./test_snort_bare.py bigFlows.pcap 64 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=16
 
 ### 1 ./test_snort_vm.py bigFlows.pcap 64 -s em2 -d enp34s0 -t 4 -n snort-vm -m 2g -p 4 -c 0-3 -w 5
 
 ### 1 ./test_suricata_bare.py --trace=bigFlows.pcap --nworker=64 -s enp5s0f1 -d enp1s0f0 -t 1 --replay-speed=16
+
+
+1 ./test_snort_bare.py bigFlows.pcap 1 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
+1 ./test_snort_bare.py bigFlows.pcap 2 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
+1 ./test_snort_bare.py bigFlows.pcap 4 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
+1 ./test_snort_bare.py bigFlows.pcap 8 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
+1 ./test_snort_bare.py bigFlows.pcap 16 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
+1 ./test_snort_bare.py bigFlows.pcap 32 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
+1 ./test_snort_bare.py bigFlows.pcap 64 -s enp1s0f0 -d enp1s0f1 -t 1 --replay-speed=4
