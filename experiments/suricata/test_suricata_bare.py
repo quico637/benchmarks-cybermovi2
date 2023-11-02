@@ -4,6 +4,7 @@ import argparse
 
 from test_suricata import *
 
+FILE = 'sslbl/ja3-fingerprints'
 
 class TestSuricataBareMetal(TestSuricataBase):
 
@@ -31,6 +32,14 @@ class TestSuricataBareMetal(TestSuricataBase):
 			'--enable-ps', '--ps-keywords', 'suricata', '--ps-outfile', 'psstat.suricata.csv'],
 			cwd=self.session_tmpdir, store_pid=True, allow_error=True, stdout=sys.stdout.buffer, stderr=sys.stdout.buffer)
 		self.suricata_out = open(self.local_tmpdir + '/suricata.out', 'wb')
+
+
+
+
+		self.simple_call(['sudo', 'suricata-update', 'enable-source', FILE])
+		self.simple_call(['sudo', 'suricata-update'])
+
+
 		self.suricata_proc = self.shell.spawn(['suricata', '-l', self.session_tmpdir, '-i', dest_nic],
 			stdout=self.suricata_out, stderr=self.suricata_out, store_pid=True, allow_error=True)
 		self.wait_for_suricata(self.session_tmpdir)
@@ -49,8 +58,10 @@ class TestSuricataBareMetal(TestSuricataBase):
 
 	def postwork(self):
 		log('Postwork...')
-		if self.status == self.STATUS_DONE:
-			self.upload_test_session(self.session_id, self.local_tmpdir, self.session_tmpdir)
+		self.simple_call(['sudo', 'suricata-update', 'enable-source', FILE])
+		self.simple_call(['sudo', 'suricata-update'])
+		# if self.status == self.STATUS_DONE:
+		# 	self.upload_test_session(self.session_id, self.local_tmpdir, self.session_tmpdir)
 
 	def cleanup(self):
 		log('Cleaning up...')
@@ -68,7 +79,7 @@ class TestSuricataBareMetal(TestSuricataBase):
 		try:
 			self.prework()
 			self.run()
-			# # self.postwork()
+			self.postwork()
 			self.cleanup()
 		except KeyboardInterrupt:
 			log('Interrupted. Stopping and cleaning...')

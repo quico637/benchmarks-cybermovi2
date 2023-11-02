@@ -29,6 +29,7 @@ def do_all_commands(test_path):
 
 
 def main():
+	os.chdir('/home/quico/benchmarks/experiments/suricata')
 	do_all_commands('./config/tests.%s.txt' % HOSTNAME)
 
 

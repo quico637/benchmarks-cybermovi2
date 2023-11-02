@@ -6,7 +6,6 @@ import time
 import spur
 from colors import Colors
 
-
 HOSTNAME = socket.gethostname()
 # Load environment variables from bash INI.
 with open('./config/config.%s.ini' % HOSTNAME, 'r') as f:
